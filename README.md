@@ -51,3 +51,11 @@ Para verificar los cambios:
 flutter analyze
 flutter test
 ```
+
+## APK para la web
+
+Cada pull request y cada push a `main` ejecutan el workflow **App** (`.github/workflows/app.yml`): `flutter analyze`, `flutter test` y `flutter build apk --release`. El APK queda como artefacto `cofferyncode-app` del run, en la pestaña **Actions** del repositorio.
+
+Descárgalo, descomprímelo y súbelo al backend como `public/downloads/cofferyncode-app.apk`, que es el archivo que enlaza el botón "Descargar la app" de la web. Para compilarlo contra otro dominio, lanza el workflow a mano desde **Actions → App → Run workflow** e indica la URL.
+
+El APK se firma con la clave de depuración del runner, así que para actualizar la app en un teléfono puede hacer falta desinstalar la versión anterior. Para publicar en Play Store hará falta una clave de firma propia.
