@@ -23,3 +23,18 @@ setup.bat y setup.ps1 (Scripts de Entorno): Archivos que, en conjunto, ofrecen a
 .metadata: Un archivo de configuración creado por las herramientas de instrumentación del SDK de Flutter. Resulta ser un archivo fundamental para el control de versiones de framework, pues proporciona la versión exacta del canal y las capacidades de migración ejecutadas durante el ciclo de vida del software.
 
 .gitignore: Un archivo configurado para prevenir a toda costa la indexación de artefactos de compilación locales, la caché dinámica (como .dart_tool/ o build/) o incluso configuraciones específicas de un IDE que comprometerían la integridad del repositorio.  
+
+## Proyectos
+
+La app incluye un archivo de proyectos (`/projects`) con filtros por categoría y una pantalla de detalle por proyecto (`/projects/<slug>`). La pantalla de inicio muestra los proyectos marcados como destacados.
+
+- El contenido vive en `lib/data/projects_data.dart` y es el mismo que publica la web. Para añadir o editar un proyecto, modifica esa lista.
+- El modelo `lib/models/project.dart` lee también el JSON público de `/api/projects` del backend (`Project.fromJson`), para poder conectar la app a la API más adelante sin cambiar las pantallas.
+- Los enlaces de demo y código solo aparecen si el proyecto los tiene.
+
+Para verificar los cambios:
+
+```bash
+flutter analyze
+flutter test
+```

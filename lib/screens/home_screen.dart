@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../data/projects_data.dart';
 import '../routes/app_routes.dart';
 import '../themes/app_theme.dart';
 import '../widgets/accent_button.dart';
 import '../widgets/custom_footer.dart';
+import '../widgets/project_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -153,8 +155,32 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 34),
+          // Proyectos destacados (los marcados como destacados en la web)
+          Row(
+            children: [
+              Expanded(
+                child: Text('PROYECTOS DESTACADOS',
+                    style: AppTheme.mono(11, color: AppColors.dim)),
+              ),
+              TextButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRoutes.projects),
+                child: Text('Ver todos', style: AppTheme.mono(11)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (final p in ProjectsData.destacados)
+            ProjectCard(
+              proyecto: p,
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.projectDetail(p.slug)),
+            ),
+          const SizedBox(height: 22),
           Text('EXPLORA', style: AppTheme.mono(11, color: AppColors.dim)),
           const SizedBox(height: 12),
+          _menuItem(
+              context, Icons.work_outline, 'Proyectos', AppRoutes.projects),
           _menuItem(context, Icons.person_outline, 'Sobre mi', AppRoutes.about),
           _menuItem(context, Icons.music_note, 'Hobbies', AppRoutes.hobbies),
           _menuItem(

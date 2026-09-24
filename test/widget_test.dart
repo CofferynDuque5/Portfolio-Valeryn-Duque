@@ -1,30 +1,65 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:portafolio_valeryn/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  // Hace scroll en la pantalla actual hasta que el widget sea visible
+  Future<void> verYTocar(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(finder, 200,
+        scrollable: find.byType(Scrollable).last);
+    // Lo lleva arriba de la pantalla para que el toque no quede en el borde
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    await tester.tap(finder);
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Inicio muestra el perfil y los proyectos destacados',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Valeryn Rouse Duque Valladares'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.scrollUntilVisible(find.text('Perla Tour'), 200);
+    expect(find.text('PROYECTOS DESTACADOS'), findsOneWidget);
+    expect(find.text('Perla Tour'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Archivo de proyectos filtra por categoria y abre el detalle',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+
+    await verYTocar(tester, find.text('Ver todos'));
+    expect(find.text('9 PROYECTOS'), findsOneWidget);
+
+    await tester.tap(find.text('Ingenieria & Labs'));
+    await tester.pumpAndSettle();
+    expect(find.text('2 PROYECTOS'), findsOneWidget);
+    expect(find.text('Perla Tour'), findsNothing);
+
+    await verYTocar(tester, find.text('Amplificador Operacional 741'));
+    expect(find.text('Vout = (1 + Rf/Rin) · Vin'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('TECNOLOGIAS'), 200,
+        scrollable: find.byType(Scrollable).last);
+    expect(find.text('Proteus'), findsOneWidget);
+    // Este proyecto no tiene enlaces, asi que no se muestra la seccion
+    expect(find.text('ENLACES'), findsNothing);
+  });
+
+  testWidgets(
+      'Ruta /projects/<slug> abre el detalle y un slug invalido el archivo',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    final navegador = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navegador.pushNamed('/projects/dyc');
+    await tester.pumpAndSettle();
+    expect(find.text('Design Your Core'), findsWidgets);
+    expect(find.text('CONTEXTO'), findsOneWidget);
+
+    navegador.pushNamed('/projects/no-existe');
+    await tester.pumpAndSettle();
+    expect(find.text('9 PROYECTOS'), findsOneWidget);
   });
 }
