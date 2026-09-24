@@ -108,3 +108,18 @@ class Project {
     );
   }
 }
+
+// Consultas comunes sobre una lista de proyectos
+extension ProjectListX on List<Project> {
+  List<Project> get destacados => where((p) => p.destacado).toList();
+
+  List<Project> porCategoria(ProjectCategory? categoria) =>
+      categoria == null ? this : where((p) => p.category == categoria).toList();
+
+  Project? porSlug(String slug) {
+    for (final p in this) {
+      if (p.slug == slug) return p;
+    }
+    return null;
+  }
+}

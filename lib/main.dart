@@ -7,10 +7,13 @@ import 'screens/hobbies_screen.dart';
 import 'screens/contact_screen.dart';
 import 'screens/projects_screen.dart';
 import 'screens/project_detail_screen.dart';
-import 'data/projects_data.dart';
+import 'data/projects_repository.dart';
+import 'models/project.dart';
 
 void main() {
   runApp(const MyApp());
+  // Carga en segundo plano los proyectos publicados (si hay API configurada)
+  ProjectsRepository.instancia.refrescar();
 }
 
 class MyApp extends StatelessWidget {
@@ -32,16 +35,22 @@ class MyApp extends StatelessWidget {
         AppRoutes.projects: (context) => const ProjectsScreen(),
       },
       // Rutas con parametro: /projects/<slug>. Si el slug no existe,
-      // mostramos el archivo completo de proyectos.
+      // mostramos el archivo completo de proyectos. Se reconstruye cuando
+      // llegan los datos de la API, por si el slug solo existe alli.
       onGenerateRoute: (settings) {
         final slug = AppRoutes.slugDeRuta(settings.name);
         if (slug == null) return null;
-        final proyecto = ProjectsData.porSlug(slug);
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => proyecto == null
-              ? const ProjectsScreen()
-              : ProjectDetailScreen(proyecto: proyecto),
+          builder: (context) => ValueListenableBuilder<List<Project>>(
+            valueListenable: ProjectsRepository.instancia.proyectos,
+            builder: (context, proyectos, _) {
+              final proyecto = proyectos.porSlug(slug);
+              return proyecto == null
+                  ? const ProjectsScreen()
+                  : ProjectDetailScreen(proyecto: proyecto);
+            },
+          ),
         );
       },
     );

@@ -53,9 +53,9 @@ void main() {
   });
 
   test('iniciales del monograma (misma regla que la web)', () {
-    expect(ProjectsData.porSlug('perla')!.iniciales, 'PT');
-    expect(ProjectsData.porSlug('varoduva')!.iniciales, 'VS');
-    expect(ProjectsData.porSlug('codigo')!.iniciales, 'UC');
+    expect(ProjectsData.todos.porSlug('perla')!.iniciales, 'PT');
+    expect(ProjectsData.todos.porSlug('varoduva')!.iniciales, 'VS');
+    expect(ProjectsData.todos.porSlug('codigo')!.iniciales, 'UC');
     expect(
         const Project(
           slug: 'x',
@@ -71,11 +71,11 @@ void main() {
   test('catalogo: slugs unicos, destacados y filtros', () {
     final slugs = ProjectsData.todos.map((p) => p.slug).toSet();
     expect(slugs.length, ProjectsData.todos.length);
-    expect(ProjectsData.destacados.map((p) => p.slug),
+    expect(ProjectsData.todos.destacados.map((p) => p.slug),
         ['perla', 'dyc', 'varoduva']);
-    expect(ProjectsData.porCategoria(ProjectCategory.eng).length, 2);
-    expect(ProjectsData.porCategoria(null).length, 9);
-    expect(ProjectsData.porSlug('no-existe'), isNull);
+    expect(ProjectsData.todos.porCategoria(ProjectCategory.eng).length, 2);
+    expect(ProjectsData.todos.porCategoria(null).length, 9);
+    expect(ProjectsData.todos.porSlug('no-existe'), isNull);
   });
 
   test('rutas de detalle de proyecto', () {

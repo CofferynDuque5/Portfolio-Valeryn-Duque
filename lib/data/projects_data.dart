@@ -1,8 +1,8 @@
 import '../models/project.dart';
 
 // Catalogo local de proyectos. Es el mismo contenido que publica la web
-// (seed del backend), ordenado igual. Sirve como fuente sin conexion hasta
-// que la app lea /api/projects.
+// (seed del backend), ordenado igual. Se muestra al abrir la app y queda
+// como respaldo si la API no responde.
 class ProjectsData {
   static const List<Project> todos = [
     Project(
@@ -166,19 +166,4 @@ class ProjectsData {
       tecnologias: ['Proteus', '741', 'Hardware'],
     ),
   ];
-
-  static List<Project> get destacados =>
-      todos.where((p) => p.destacado).toList();
-
-  static List<Project> porCategoria(ProjectCategory? categoria) =>
-      categoria == null
-          ? todos
-          : todos.where((p) => p.category == categoria).toList();
-
-  static Project? porSlug(String slug) {
-    for (final p in todos) {
-      if (p.slug == slug) return p;
-    }
-    return null;
-  }
 }

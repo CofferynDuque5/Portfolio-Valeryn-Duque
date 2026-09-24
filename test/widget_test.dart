@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:portafolio_valeryn/data/projects_data.dart';
+import 'package:portafolio_valeryn/data/projects_repository.dart';
 import 'package:portafolio_valeryn/main.dart';
+import 'package:portafolio_valeryn/models/project.dart';
 
 void main() {
+  final repositorio = ProjectsRepository.instancia;
+  tearDown(() => repositorio.proyectos.value = ProjectsData.todos);
+
   // Hace scroll en la pantalla actual hasta que el widget sea visible
   Future<void> verYTocar(WidgetTester tester, Finder finder) async {
     await tester.scrollUntilVisible(finder, 200,
@@ -61,5 +67,28 @@ void main() {
     navegador.pushNamed('/projects/no-existe');
     await tester.pumpAndSettle();
     expect(find.text('9 PROYECTOS'), findsOneWidget);
+  });
+
+  testWidgets('las pantallas se actualizan cuando llegan datos de la API',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    final navegador = tester.state<NavigatorState>(find.byType(Navigator));
+
+    navegador.pushNamed('/projects/nuevo');
+    await tester.pumpAndSettle();
+    expect(find.text('9 PROYECTOS'), findsOneWidget); // aun no existe
+
+    repositorio.proyectos.value = const [
+      Project(
+        slug: 'nuevo',
+        category: ProjectCategory.mobile,
+        frame: ProjectFrame.phone,
+        nombre: 'Proyecto nuevo',
+        lema: 'Publicado desde el panel',
+        descripcion: 'Descripcion del proyecto nuevo',
+      ),
+    ];
+    await tester.pumpAndSettle();
+    expect(find.text('Descripcion del proyecto nuevo'), findsOneWidget);
   });
 }

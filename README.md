@@ -28,9 +28,22 @@ setup.bat y setup.ps1 (Scripts de Entorno): Archivos que, en conjunto, ofrecen a
 
 La app incluye un archivo de proyectos (`/projects`) con filtros por categoría y una pantalla de detalle por proyecto (`/projects/<slug>`). La pantalla de inicio muestra los proyectos marcados como destacados.
 
-- El contenido vive en `lib/data/projects_data.dart` y es el mismo que publica la web. Para añadir o editar un proyecto, modifica esa lista.
-- El modelo `lib/models/project.dart` lee también el JSON público de `/api/projects` del backend (`Project.fromJson`), para poder conectar la app a la API más adelante sin cambiar las pantallas.
+- Al abrir la app se muestra el catálogo local de `lib/data/projects_data.dart`, que es el mismo contenido que publica la web.
+- Si la app se compila con la URL del backend, pide en segundo plano los proyectos publicados en `/api/projects` y los muestra en lugar del catálogo local. Así, lo que publiques desde el panel de administración aparece en la app sin tocar código. En la pantalla de Proyectos puedes deslizar hacia abajo para volver a cargarlos.
+- Si la API no responde, devuelve un error o una lista vacía, la app sigue mostrando los datos locales.
 - Los enlaces de demo y código solo aparecen si el proyecto los tiene.
+
+### Conectar la app a la API
+
+Indica el dominio donde corre el backend (sin `/api` al final):
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://tu-dominio.com
+flutter build apk --dart-define=API_BASE_URL=https://tu-dominio.com
+flutter build web --dart-define=API_BASE_URL=https://tu-dominio.com
+```
+
+Sin `API_BASE_URL`, la app funciona solo con los datos locales. Para la versión web, el dominio donde publiques la app debe estar en la lista de orígenes permitidos (CORS) del backend.
 
 Para verificar los cambios:
 

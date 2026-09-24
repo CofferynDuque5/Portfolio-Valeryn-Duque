@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../data/projects_data.dart';
+import '../data/projects_repository.dart';
+import '../models/project.dart';
 import '../routes/app_routes.dart';
 import '../themes/app_theme.dart';
 import '../widgets/accent_button.dart';
@@ -170,12 +171,19 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          for (final p in ProjectsData.destacados)
-            ProjectCard(
-              proyecto: p,
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.projectDetail(p.slug)),
+          ValueListenableBuilder<List<Project>>(
+            valueListenable: ProjectsRepository.instancia.proyectos,
+            builder: (context, proyectos, _) => Column(
+              children: [
+                for (final p in proyectos.destacados)
+                  ProjectCard(
+                    proyecto: p,
+                    onTap: () => Navigator.pushNamed(
+                        context, AppRoutes.projectDetail(p.slug)),
+                  ),
+              ],
             ),
+          ),
           const SizedBox(height: 22),
           Text('EXPLORA', style: AppTheme.mono(11, color: AppColors.dim)),
           const SizedBox(height: 12),

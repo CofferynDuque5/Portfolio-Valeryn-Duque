@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/projects_data.dart';
+import '../data/projects_repository.dart';
 import '../models/project.dart';
 import '../routes/app_routes.dart';
 import '../themes/app_theme.dart';
@@ -7,7 +7,8 @@ import '../widgets/custom_footer.dart';
 import '../widgets/project_card.dart';
 import '../widgets/section_header.dart';
 
-// Archivo completo de proyectos con filtros por categoria (como en la web)
+// Archivo completo de proyectos con filtros por categoria (como en la web).
+// Deslizar hacia abajo vuelve a pedir los proyectos a la API.
 class ProjectsScreen extends StatefulWidget {
   const ProjectsScreen({super.key});
 
@@ -48,10 +49,24 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final proyectos = ProjectsData.porCategoria(_filtro);
+    final repositorio = ProjectsRepository.instancia;
     return Scaffold(
       appBar: AppBar(title: Text('Proyectos', style: AppTheme.heading(18))),
-      body: ListView(
+      body: ValueListenableBuilder<List<Project>>(
+        valueListenable: repositorio.proyectos,
+        builder: (context, todos, _) =>
+            _lista(context, todos.porCategoria(_filtro), repositorio),
+      ),
+    );
+  }
+
+  Widget _lista(BuildContext context, List<Project> proyectos,
+      ProjectsRepository repositorio) {
+    return RefreshIndicator(
+      color: AppColors.co,
+      onRefresh: repositorio.refrescar,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
         children: [
           const SectionHeader(
