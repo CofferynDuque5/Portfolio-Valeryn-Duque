@@ -11,7 +11,8 @@ import 'projects_data.dart';
 // API configurada, lo reemplaza con lo publicado en /api/projects. Si la API
 // falla o no hay conexion, se conservan los datos que ya se estaban mostrando.
 //
-// La URL se define al compilar:
+// Por defecto usa el dominio donde se despliega el backend. Se puede cambiar
+// al compilar (o dejar vacia para usar solo el catalogo local):
 //   flutter run --dart-define=API_BASE_URL=https://tu-dominio.com
 class ProjectsRepository {
   ProjectsRepository({
@@ -19,7 +20,9 @@ class ProjectsRepository {
     String? baseUrl,
     this.timeout = const Duration(seconds: 8),
   })  : _client = client ?? http.Client(),
-        baseUrl = baseUrl ?? const String.fromEnvironment('API_BASE_URL');
+        baseUrl = baseUrl ??
+            const String.fromEnvironment('API_BASE_URL',
+                defaultValue: 'https://cofferyncode.nvcorx.com');
 
   // Instancia que usan las pantallas
   static final instancia = ProjectsRepository();
